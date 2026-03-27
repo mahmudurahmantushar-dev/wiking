@@ -1,0 +1,226 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}AI Image Generated - Wiki{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="mb-4">
+        <i class="fas fa-robot text-primary me-2"></i>
+        AI Image Generated
+    </h1>
+    
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{% url 'generate_ai_image' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" 
+                           name="prompt" 
+                           placeholder="Describe a new image..."
+                           value="{{ prompt|default:'' }}"
+                           required>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-magic me-2"></i>Generate New Image
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Error Message (NEW) -->
+    {% if error %}
+    <div class="alert alert-danger mb-4">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <!-- Success Results -->
+    {% if success %}
+        <!-- Store data in JavaScript -->
+        <script>
+            const GENERATED_IMAGE_URL = "{{ image_url|escapejs }}";
+            const GENERATED_PROMPT = "{{ prompt|escapejs }}";
+            const GENERATED_PROMPT_SLUG = "{{ prompt|slugify|escapejs }}";
+        </script>
+        
+        <div class="alert alert-success">
+            <h4><i class="fas fa-check-circle me-2"></i>Image Generated Successfully!</h4>
+            <p class="mb-0">
+                <strong>Prompt:</strong> "{{ prompt }}"<br>
+                <small>Time: {{ generation_time }} seconds | 
+                Your usage: {{ rate_limit_used }}/{{ rate_limit_max }} images this hour</small>
+            </p>
+        </div>
+        
+        <!-- Generated Image Display -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Your Generated Image</h5>
+                <span class="badge bg-info">
+                    <i class="fas fa-image me-1"></i>Ready
+                </span>
+            </div>
+            <div class="card-body text-center">
+                <!-- Loading Spinner -->
+                <div id="image-loading-spinner" class="mb-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading image...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading your generated image...</p>
+                </div>
+                
+                <!-- The Actual Image -->
+                <div id="image-container">
+                    <img src="{{ image_url }}" 
+                         alt="AI generated image: {{ prompt }}"
+                         class="img-fluid rounded shadow mb-3"
+                         id="ai-generated-image"
+                         style="max-height: 500px; max-width: 100%;"
+                         onload="imageLoaded()"
+                         onerror="imageFailed()">
+                </div>
+                
+                <!-- Error Message -->
+                <div id="image-error" class="alert alert-danger mb-4" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span id="error-message">Image failed to load. Try opening in new tab.</span>
+                    <div class="mt-2">
+                        <button type="button" onclick="retryImageLoad()" class="btn btn-sm btn-outline-danger me-2">
+                            <i class="fas fa-redo me-1"></i>Retry
+                        </button>
+                        <button type="button" onclick="openImageInNewTab()" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Open in New Tab
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex flex-wrap gap-2 justify-content-center mt-4">
+                    <button id="download-btn" class="btn btn-success" onclick="downloadImage()">
+                        <i class="fas fa-download me-2"></i>Save Image to Device
+                    </button>
+                    
+                    <button id="open-tab-btn" class="btn btn-outline-info" onclick="openImageInNewTab()">
+                        <i class="fas fa-external-link-alt me-2"></i>Open in New Tab
+                    </button>
+                    
+                    <a href="{% url 'generate_ai_image' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-redo me-2"></i>Generate Another
+                    </a>
+                </div>
+                
+                <!-- Clear Warning -->
+                <div class="alert alert-warning mt-4">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Image Preview</h6>
+                    <p class="mb-0">
+                        This is a preview of your AI-generated image based on: <strong>"{{ prompt }}"</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- JavaScript -->
+        <script>
+        function imageLoaded() {
+            console.log("Image loaded successfully!");
+            const btn = document.getElementById('download-btn');
+            if (btn) btn.disabled = false;
+        }
+        
+        function imageFailed() {
+            console.log("Image failed to load");
+            const err = document.getElementById('image-error');
+            if (err) err.style.display = 'block';
+        }
+        
+        // FIXED: choose ? or & depending on URL
+        function retryImageLoad() {
+            const err = document.getElementById('image-error');
+            if (err) err.style.display = 'none';
+
+            const img = document.getElementById('ai-generated-image');
+            if (!img) return;
+
+            const sep = GENERATED_IMAGE_URL.includes('?') ? '&' : '?';
+            img.src = GENERATED_IMAGE_URL + sep + 't=' + new Date().getTime();
+        }
+        
+        function openImageInNewTab() {
+            window.open(GENERATED_IMAGE_URL, '_blank');
+        }
+        
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = GENERATED_IMAGE_URL;
+            link.download = 'ai-wiki-' + GENERATED_PROMPT_SLUG + '.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Visual feedback
+            const btn = document.getElementById('download-btn');
+            if (!btn) return;
+
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Saved!';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-secondary');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-success');
+            }, 2000);
+        }
+        </script>
+        
+    {% else %}
+        <!-- Initial state -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">How to Use</h5>
+            </div>
+            <div class="card-body">
+                <p>Enter a description of the image you want to generate. For example:</p>
+                <ul>
+                    <li><em>"a Bengal cat sleeping in a sunbeam"</em></li>
+                    <li><em>"watercolor painting of a mountain landscape"</em></li>
+                    <li><em>"cyberpunk street market at night"</em></li>
+                </ul>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> Generated images are temporarily available. 
+                    Please save them to your device if you want to keep them permanently.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Additional CSS -->
+<style>
+#ai-generated-image {
+    border: 3px solid;
+    border-image: linear-gradient(45deg, #3b82f6, #8b5cf6) 1;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+#ai-generated-image:hover {
+    transform: scale(1.02);
+}
+
+.btn {
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+</style>
+{% endblock %}

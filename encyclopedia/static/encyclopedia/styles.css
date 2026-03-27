@@ -1,0 +1,411 @@
+/* encyclopedia/static/encyclopedia/styles.css */
+
+/* 1. RESET & BASE */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: #f0f7ff; /* Lighter blue background */
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 2. LAYOUT ENGINE - UNCHANGED STRUCTURE */
+.main-row {
+    min-height: 100vh;
+}
+
+/* SIDEBAR - DESKTOP */
+.sidebar {
+    background: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%); /* Blue gradient */
+    border-right: 1px solid #3b82f6;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 280px;
+    box-shadow: 4px 0 15px rgba(30, 58, 138, 0.1);
+}
+
+.main-content {
+    margin-left: 280px;
+    flex: 1;
+    width: calc(100% - 280px);
+    background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 3. SYMMETRICAL COMPONENTS - COLOR UPDATED */
+.logo-container {
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.logo-container:hover .logo-img {
+    transform: rotate(5deg) scale(1.05);
+}
+
+.logo-container h2 {
+    color: white !important;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.search-input {
+    width: 100% !important;
+    padding: 12px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 10px !important;
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #1e293b !important;
+}
+
+.search-input::placeholder {
+    color: #64748b !important;
+}
+
+.search-input:focus {
+    border-color: #fbbf24 !important; /* Amber/yellow for focus */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+    background: white !important;
+}
+
+/* BUTTONS - UPDATED COLORS */
+.sidebar .btn {
+    width: 100% !important;
+    padding: 12px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    border: none !important;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.sidebar .btn:active {
+    transform: scale(0.96);
+}
+
+.btn-search { 
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%) !important; 
+    color: #1e293b !important; 
+    border: 2px solid #f59e0b !important;
+}
+
+.btn-search:hover {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+}
+
+.btn-ai { 
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%) !important; 
+    color: white !important; 
+    border: 2px solid #8b5cf6 !important;
+}
+
+.btn-ai:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%) !important;
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-logout { 
+    background: linear-gradient(135deg, #ef4444 0%, #f87171 100%) !important; 
+    color: white !important;
+    border: 2px solid #ef4444 !important;
+}
+
+.btn-logout:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
+    color: white !important;
+    border: 2px solid #10b981 !important;
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* NAV LINKS - UPDATED */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 4px 0;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding-left: 20px;
+    transform: translateX(5px);
+}
+
+.nav-link i {
+    color: #fbbf24; /* Amber icons */
+}
+
+/* 4. MODERN CARDS (For Index Page) - UPDATED */
+.entry-card {
+    background: linear-gradient(135deg, white 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.1), 0 2px 4px -1px rgba(30, 58, 138, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.entry-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+}
+
+.entry-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(30, 58, 138, 0.1), 0 10px 10px -5px rgba(30, 58, 138, 0.04);
+}
+
+/* Entry Buttons - UPDATED */
+.btn-read {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%) !important;
+    color: white !important;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    width: 100%; 
+    padding: 12px !important; 
+    border-radius: 10px !important;
+    text-decoration: none; 
+    margin-bottom: 10px;
+    transition: all 0.2s;
+    border: none !important;
+    font-weight: 600;
+}
+
+.btn-read:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
+    color: white !important;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    width: 100%; 
+    padding: 12px !important; 
+    border-radius: 10px !important;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none !important;
+    font-weight: 600;
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* USER SECTION - UPDATED */
+.user-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-section .text-secondary {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.user-section .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ALERTS - UPDATED */
+.alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+    border-left: 5px solid #10b981;
+}
+
+.alert-danger, .alert-error {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #991b1b;
+    border-left: 5px solid #ef4444;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    border-left: 5px solid #f59e0b;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    border-left: 5px solid #3b82f6;
+}
+
+/* 5. MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+    body { flex-direction: column; }
+    
+    .sidebar {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        border-right: none;
+        border-bottom: 2px solid #3b82f6;
+        display: contents;
+    }
+
+    .sidebar-top-group {
+        order: 1;
+        background: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+        width: 100%;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        order: 2;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+    }
+
+    .user-section {
+        order: 3 !important;
+        background: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .logo-img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* SCROLLBAR STYLING */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #f59e0b, #8b5cf6);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #d97706, #7c3aed);
+}
+
+/* SELECTION COLOR */
+::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #1e293b;
+}
+
+::-moz-selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #1e293b;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.content-wrapper > * {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* AI GENERATED PAGE SPECIFIC (Keep original layout) */
+#ai-generated-image {
+    border: 3px solid;
+    border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1;
+    border-radius: 12px;
+}
+
+#download-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#image-loading-spinner .spinner-border {
+    color: #3b82f6;
+}
+
+/* QUICK PROMPT BUTTONS */
+.quick-prompt {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #bae6fd;
+    color: #0369a1;
+    transition: all 0.2s ease;
+}
+
+.quick-prompt:hover {
+    background: linear-gradient(135deg, #bae6fd 0%, #7dd3fc 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(2, 132, 199, 0.2);
+}

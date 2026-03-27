@@ -1,0 +1,48 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Home - Wiking
+{% endblock %}
+
+{% block body %}
+    <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+        <h1 class="m-0 fw-bold"><i class="fas fa-book-open text-primary me-2"></i>Public Encyclopedia</h1>
+        <span class="badge bg-secondary ms-3 rounded-pill">All Pages</span>
+    </div>
+
+    <div class="row">
+        {% for entry in entries %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="entry-card h-100 d-flex flex-column">
+                    <h4 class="fw-bold mb-3 text-dark">
+                        {{ entry }}
+                    </h4>
+                    
+                    <div class="mt-auto">
+                        <a href="{% url 'entry' entry %}" class="btn-read">
+                            <i class="fas fa-book-reader me-2"></i> Read
+                        </a>
+
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'edit_page' entry %}" class="btn-edit">
+                                <i class="fas fa-pen me-2"></i> Edit
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn-edit" style="opacity: 0.6; background: #cbd5e1 !important; color: #64748b !important;">
+                                <i class="fas fa-lock me-2"></i> Login to Edit
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No encyclopedia entries found.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'new_page' %}" class="btn btn-primary mt-2">Create First Page</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

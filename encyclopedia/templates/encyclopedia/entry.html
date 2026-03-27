@@ -1,0 +1,135 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+<div class="entry-page">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="entry-title">
+                    {{ title }}
+                </h1>
+                {% if entry_user %}
+                <div class="entry-meta mt-2">
+                    <span class="badge bg-light text-dark">
+                        <i class="fas fa-user-edit me-1"></i>Latest edit by {{ entry_user.username }}
+                    </span>
+                    {% if total_edits > 1 %}
+                    <span class="badge bg-info text-white ms-2">
+                        <i class="fas fa-history me-1"></i>{{ total_edits }} edits
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Action Buttons - OPEN EDITING -->
+            <div class="action-buttons">
+                {% if user.is_authenticated %}
+                <div class="btn-group" role="group">
+                    <!-- ANY authenticated user can edit -->
+                    <a href="{% url 'edit_page' title %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>Edit Page
+                    </a>
+                    {% if total_edits > 1 %}
+                    <a href="{% url 'history' title %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-history me-1"></i>History
+                    </a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-sign-in-alt me-1"></i>Login to Edit
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div class="entry-content mt-4">
+        <div class="markdown-content wiki-styled">
+            {{ content|safe }}
+        </div>
+        
+        {% if not content %}
+        <div class="empty-content text-center py-5">
+            <i class="fas fa-sticky-note fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">This page is empty</h4>
+            {% if user.is_authenticated %}
+            <a href="{% url 'edit_page' title %}" class="btn btn-primary mt-2">
+                <i class="fas fa-edit me-1"></i>Add Content
+            </a>
+            {% else %}
+            <p class="text-muted mt-2">Login to add content to this page.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Edit History -->
+    {% if edit_history and edit_history|length > 1 %}
+    <div class="edit-history mt-5">
+        <h5 class="border-bottom pb-2">
+            <i class="fas fa-history me-2"></i>Recent Edits
+        </h5>
+        <div class="list-group">
+            {% for edit in edit_history|slice:":3" %}
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <small class="text-muted">
+                        <i class="fas fa-user me-1"></i>{{ edit.user.username }}
+                    </small>
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>{{ edit.created_at|date:"M d, Y H:i" }}
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if total_edits > 3 %}
+        <div class="text-end mt-2">
+            <a href="{% url 'history' title %}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-list me-1"></i>View All {{ total_edits }} Edits
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Page Footer -->
+    <div class="entry-footer mt-5 pt-3 border-top">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {% if entry_user %}
+                            Open editing • Latest edit by {{ entry_user.username }}
+                            {% else %}
+                            Public encyclopedia page • Open editing
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'edit_page' title %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit me-1"></i>Improve This Page
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login to Contribute
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
